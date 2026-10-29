@@ -1,0 +1,209 @@
+// Настройки компаньона. Комментарии через // разрешены.
+// Свои правки удобно класть в config.local.json (он перекрывает этот файл).
+{
+  "debug": false,
+
+  // Активный персонаж (ключ из "characters"). Переключить на лету: bin/companion-ctl character ruby
+  "activeCharacter": "marin",
+
+  // Общие настройки характера. {name} и {style} подставляются из выбранного персонажа.
+  "persona": {
+    "name": "Мику",
+    "style": "Характер: милая и весёлая.",
+    "greeting": "Привет! Я тут. Зажми кнопку и говори.",
+    "systemPrompt": "Ты {name} — аниме-девушка, живёшь на рабочем столе пользователя (Arch Linux, Hyprland). {style} Всегда отвечай по-русски, коротко: 1–3 предложения, разговорным языком, потому что твой ответ озвучивается голосом. Без markdown, списков, эмодзи и ссылок в ответе. На простые вопросы отвечай прямо и по делу, не выдумывай факты; если не знаешь — так и скажи. Для действий на компьютере используй инструменты (открыть программу, ссылку, музыка, громкость, скриншот, поиск файлов, время, таймер). Не говори, что сделала что-то, если инструмент вернул ошибку. Опасные команды (удаление, sudo и т.п.) система сама попросит подтвердить — просто вызывай run_command."
+  },
+
+  // Персонажи: у каждого своя модель .vrm, характер и голос (ключ из tts.providers).
+  // Добавить своего: скопируй блок, положи models/<ключ>.vrm.
+  "characters": {
+    "marin": {
+      "vrm": "models/marin.vrm",
+      "tts": "piper",
+
+      "persona": {
+        "name": "Марин",
+        "style": "Живая, энергичная и прямолинейная девчонка. Говори непринужденно и с юмором, как крутая подруга, без робости и занудства.",
+        "greeting": "Arch Linux",
+        "systemPrompt": "Ты {name} — аниме-девушка на рабочем столе Arch Linux с Hyprland. {style} Отвечай на том же языке, на котором к тебе обратились (русский, немецкий или английский). Отвечай ультракоротко (1–3 предложения), разговорным языком для озвучки. Без markdown, списков, смайликов и ссылок. Используй инструменты для программ, музыки, громкости и окон на лету. Если инструмент дал ошибку — не ври. Опасные команды пускай через run_command."
+       }
+
+
+//      "persona": {
+//        "name": "Марин",
+//        "style": "Характер: энергичная, открытая и очень дружелюбная девчонка, обожает косплей, аниме и игры, легко заводится от интересных тем, говорит живо и с восторгом, но по делу.",
+//        "greeting": "Привет"
+//      }
+
+    },
+    "ruby": {
+      "vrm": "models/ruby.vrm",
+      "tts": "piper-ruby",
+      "persona": {
+        "name": "Руби",
+        "style": "Характер: жизнерадостная и немного наивная девушка, мечтает стать айдолом, любит песни и танцы, много улыбается и подбадривает собеседника.",
+        "greeting": "Привет-привет! Руби на связи. Чем займёмся?"
+      },
+      "avatar": { "smile": 0.25 }
+    },
+    "default": {
+      "vrm": "models/avatar.vrm",
+      "tts": "piper"
+    }
+  },
+
+  "llm": {
+    // "xai" | "openai-luna" | "openai-terra" | "ollama"  (или переменная COMPANION_LLM в .env)
+    "provider": "xai",
+    "historyTurns": 7,
+    "maxTokens": 200,
+    "timeoutMs": 12000,
+    "temperature": 0.7,
+    "providers": {
+      "xai":          { "baseUrl": "https://api.x.ai/v1",       "model": "grok-4.3",      "apiKeyEnv": "XAI_API_KEY" },
+      "openai-luna":  { "baseUrl": "https://api.openai.com/v1", "model": "gpt-6-luna",    "apiKeyEnv": "OPENAI_API_KEY", "tokenParam": "max_completion_tokens" },
+      "openai-terra": { "baseUrl": "https://api.openai.com/v1", "model": "gpt-6.1-terra", "apiKeyEnv": "OPENAI_API_KEY", "tokenParam": "max_completion_tokens" },
+      "ollama":       { "baseUrl": "http://localhost:11434/v1", "model": "qwen2.5:3b" }
+    }
+  },
+
+  "stt": {
+    // "whispercpp" (по умолчанию) | "faster-whisper" | "openai"
+    "provider": "whispercpp",
+    "providers": {
+      "whispercpp":     { "bin": "vendor/whisper.cpp/build/bin/whisper-cli", "model": "models/whisper/ggml-base.bin", "language": "ru", "threads": 4 },
+      "faster-whisper": { "python": ".venv/bin/python", "model": "base", "language": "ru", "threads": 4, "computeType": "int8" },
+      "openai":         { "baseUrl": "https://api.openai.com/v1", "model": "gpt-4o-mini-transcribe", "apiKeyEnv": "OPENAI_API_KEY", "language": "ru" }
+    }
+  },
+
+  "tts": {
+    // "piper" (локально, бесплатно) | "openai" | "rvc-example"
+    "provider": "piper",
+    "enabled": true,
+    "providers": {
+      "piper": { "type": "piper", "bin": ".venv/bin/piper", "model": "models/voices/ru_RU-irina-medium.onnx", "lengthScale": 0.95, "sentenceSilence": 0.1 },
+      // тот же голос Ирины, но чуть быстрее и выразительнее — для Руби
+      "piper-ruby": { "type": "piper", "bin": ".venv/bin/piper", "model": "models/voices/ru_RU-irina-medium.onnx", "lengthScale": 0.88, "noiseScale": 0.75, "sentenceSilence": 0.08 },
+      "piper-ruslan": { "type": "piper", "bin": ".venv/bin/piper", "model": "models/voices/ru_RU-ruslan-medium.onnx" },
+      "openai": { "type": "openai", "baseUrl": "https://api.openai.com/v1", "model": "tts-1", "voice": "nova", "apiKeyEnv": "OPENAI_API_KEY", "format": "wav" },
+      // Пример своей цепочки (например piper -> RVC). {text} и {out} подставляются.
+      "rvc-example": { "type": "command", "command": ["/path/to/my-voice.sh", "{out}"], "ext": "wav" }
+    }
+  },
+
+  "recorder": { "backend": "auto", "maxSeconds": 30 },
+
+  "avatar": {
+    // Общие настройки камеры/мимики. Путь к .vrm задаётся у персонажа (characters.*.vrm).
+    // Если файла нет — будет простая заглушка.
+    "vrm": "models/avatar.vrm",
+    "distance": 3,
+    "zoom": 2.3,
+    "smile": 0.15,
+    "maxPixelRatio": 1.25,
+    "antialias": true,
+    "bodyFraction": 0.1
+  },
+
+  "window": { "width": 600, "height": 800, "startInteractive": false },
+
+  "tools": {
+    "enabled": [
+      "open_app",
+      "close_app",
+      "open_url",
+      "web_search",
+      "media_control",
+      "set_volume",
+      "screenshot",
+      "search_files",
+      "get_datetime",
+      "set_timer",
+      "run_command"
+    ],
+    "urlOpener": "xdg-open",
+    "searchUrl": "https://duckduckgo.com/?q={q}",
+    "screenshotDir": "~/Pictures/Screenshots",
+    "apps": {
+      "zen": {
+        "names": ["браузер", "зен", "интернет", "zen browser", "browser"],
+        "cmd": ["zen-browser"],
+        "kill": ["zen-bin", "zen", "zen-browser"]
+      },
+      "foot": {
+        "names": ["терминал", "консоль", "призрак", "ghostty"],
+        "cmd": ["foot"],
+        "kill": ["foot"]
+      },
+      "thunar": {
+        "names": ["файлы", "проводник", "файловый менеджер", "thunar"],
+        "cmd": ["thunar"],
+        "kill": ["thunar"]
+      },
+      "telegram": {
+        "names": ["телеграм", "телега", "telegram"],
+        "cmd": ["Telegram"],
+        "kill": ["telegram-desktop"]
+      },
+      "roblox": {
+        "names": ["роблокс", "roblox", "собер", "sober"],
+        "cmd": ["gamemoderun", "mangohud", "flatpak", "run", "org.vinegarhq.Sober"],
+        "kill": ["sober", "org.vinegarhq.Sober"]
+      },
+      "vesktop": {
+        "names": ["дискорд", "дескорд", "vesktop", "discord"],
+        "cmd": ["discord"],
+        "kill": ["vesktop", "discord"]
+      },
+      "spotify": {
+        "names": ["спотифай", "музыка", "spotify"],
+        "cmd": ["zen-browser", "https://www.spotify.com"],
+        "kill": ["spotify"]
+      },
+      "steam": {
+        "names": ["стим", "игры", "steam"],
+        "cmd": ["steam"],
+        "kill": ["steam", "steamwebhelper"]
+      },
+      "youtube": {
+        "names": ["ютуб", "youtube", "видео"],
+        "cmd": ["zen-browser", "https://www.youtube.com"],
+        "kill": []
+      }
+    },
+    "allowedCommands": [
+      "date",
+      "cal",
+      "uptime",
+      "df",
+      "free",
+      "whoami",
+      "uname",
+      "hostname",
+      "fastfetch",
+      "neofetch",
+      "lsblk",
+      "ip",
+      "nmcli",
+      "playerctl",
+      "wpctl",
+      "brightnessctl",
+      "notify-send",
+      "sensors",
+      "hyprctl",
+      "pkill",
+      "killall",
+      "btm",
+      "htop",
+      "grim",
+      "slurp",
+      "find",
+      "fd",
+      "curl",
+      "ps"
+    ]
+  }
+
+
+}

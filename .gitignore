@@ -1,0 +1,8 @@
+node_modules/
+.venv/
+vendor/
+.env
+config.local.json
+models/whisper/*.bin
+models/voices/*.onnx*
+models/*.vrm

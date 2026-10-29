@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+'use strict';
+const path = require('path');
+const projectRoot = path.resolve(__dirname, '..');
+const { sendCommand } = require(path.join(projectRoot, 'src/main/control'));
+const args = process.argv.slice(2);
+if (!args.length || args[0] === '-h' || args[0] === '--help') {
+  console.log('companion-ctl ptt-start | ptt-stop | ptt-toggle | interact | show | hide | toggle | yes | no | stop | reset | say <текст> | status | quit');
+  process.exit(0);
+}
+sendCommand(args.join(' '))
+  .then((r) => { console.log(r); process.exit(r.startsWith('error') ? 1 : 0); })
+  .catch((e) => { console.error(`anime-companion не запущен? (${e.code || e.message})`); process.exit(2); });

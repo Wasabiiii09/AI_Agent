@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>Anime Companion</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-lbdvhE4LsglvelETbfQslpC16WU51J3FGjNkzXSM7h0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self' blob: data:;" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../../node_modules/three/build/three.module.js",
+        "three/addons/": "../../node_modules/three/examples/jsm/",
+        "@pixiv/three-vrm": "../../node_modules/@pixiv/three-vrm/lib/three-vrm.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div id="bubble" class="hidden"></div>
+  <div id="status"></div>
+  <div id="panel" class="hidden">
+    <div id="confirm" class="hidden">
+      <div id="confirm-text"></div>
+      <button id="yes">Да</button><button id="no">Нет</button>
+    </div>
+    <form id="chat">
+      <input id="input" autocomplete="off" placeholder="Напиши мне…" />
+      <button id="mic" type="button" title="Удерживай, чтобы говорить">🎙</button>
+    </form>
+    <div id="hint">Super+Shift+Z — режим «сквозь окно»</div>
+  </div>
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

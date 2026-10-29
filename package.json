@@ -1,0 +1,23 @@
+{
+  "name": "anime-companion",
+  "version": "0.1.0",
+  "description": "Desktop anime AI companion (VRM + LLM + local voice) for Hyprland/Wayland",
+  "main": "src/main/main.js",
+  "type": "commonjs",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron . --ozone-platform-hint=auto",
+    "test": "node --test test/*.test.js",
+    "doctor": "node bin/doctor.js"
+  },
+  "dependencies": {
+    "@pixiv/three-vrm": "^3.4.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "electron": "^38.8.6"
+  },
+  "allowScripts": {
+    "electron@38.8.6": true
+  }
+}
